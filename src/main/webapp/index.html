@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Laundry System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #d4edff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .app { width: 100%; max-width: 480px; background: white; border-radius: 32px; padding: 28px 24px 32px; box-shadow: 0 12px 48px rgba(0,0,0,0.06); margin: 0 auto; }
+        
+        /* ===== TOP BAR ===== */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .top-bar .brand { font-size: 1.4rem; font-weight: 700; color: #0f2b3a; }
+        .top-bar .brand i { color: #1f6f8a; margin-right: 8px; }
+        .cart-icon { background: #f0f5f9; border-radius: 30px; padding: 6px 16px 6px 14px; border: 1px solid #dce6ed; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; color: #0f2b3a; font-size: 0.9rem; }
+        .cart-icon .badge { background: #1f6f8a; color: white; border-radius: 30px; padding: 0 10px; font-size: 0.7rem; }
+        
+        /* ===== LANDING ===== */
+        .landing { text-align: center; padding: 16px 0 10px; }
+        .landing .icon-big { font-size: 4.5rem; color: #1f6f8a; margin-bottom: 12px; }
+        .landing h1 { font-size: 2rem; color: #0f2b3a; font-weight: 700; }
+        .landing p { color: #4f6f82; font-size: 1.05rem; margin-bottom: 32px; }
+        
+        /* ===== BUTTONS ===== */
+        .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: 0.15s; text-align: center; -webkit-tap-highlight-color: transparent; }
+        .btn i { margin-right: 10px; }
+        .btn-primary { background: #0f2b3a; color: white; box-shadow: 0 4px 12px rgba(15,43,58,0.2); }
+        .btn-primary:active { background: #1a3f52; transform: scale(0.97); }
+        .btn-secondary { background: #1f6f8a; color: white; box-shadow: 0 4px 12px rgba(31,111,138,0.25); }
+        .btn-secondary:active { background: #185a72; transform: scale(0.97); }
+        .btn-outline { background: transparent; color: #0f2b3a; border: 2px solid #dce6ed; }
+        .btn-outline:active { background: #f0f5f9; }
+        .btn-success { background: #1a8c4a; color: white; }
+        .btn-success:active { background: #14753d; transform: scale(0.97); }
+        .btn-danger { background: #b8860b; color: white; }
+        .btn-danger:active { background: #9e7309; transform: scale(0.97); }
+        .btn-group { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; }
+        .btn-group-row { display: flex; gap: 14px; }
+        .btn-group-row .btn { flex: 1; }
+        
+        /* ===== VIEWS ===== */
+        .view { display: none; animation: fadeIn 0.2s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { 0% { opacity: 0.2; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+        .back-btn { background: #eef3f7; border: none; padding: 10px 22px; border-radius: 40px; font-weight: 600; color: #0f2b3a; cursor: pointer; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px; -webkit-tap-highlight-color: transparent; }
+        .back-btn:active { background: #dce6ed; }
+        
+        /* ===== FORM CARD (UNIFORM SIZE) ===== */
+        .form-card { background: #f8fbfd; border-radius: 24px; padding: 24px 20px; border: 1px solid #e8eef2; }
+        .form-card h2 { color: #0f2b3a; font-size: 1.5rem; margin-bottom: 20px; }
+        .form-card h2 i { color: #1f6f8a; margin-right: 10px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; color: #0f2b3a; font-size: 0.95rem; margin-bottom: 4px; }
+        .form-group label i { color: #4f6f82; width: 22px; margin-right: 6px; }
+        .form-group input { width: 100%; padding: 14px 18px; border-radius: 50px; border: 1px solid #dce6ed; background: white; font-size: 1rem; transition: 0.15s; }
+        .form-group input:focus { border-color: #1f6f8a; outline: none; box-shadow: 0 0 0 3px rgba(31,111,138,0.12); }
+        .form-actions { display: flex; gap: 14px; margin-top: 8px; }
+        .form-actions .btn { flex: 1; }
+        
+        /* ===== SERVICES ===== */
+        .choice-group { background: white; border-radius: 40px; padding: 16px 20px; margin: 16px 0 20px; border: 1px solid #e8eef2; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .choice-group .label { font-weight: 600; color: #0f2b3a; font-size: 0.95rem; }
+        .choice-group .label i { color: #1f6f8a; margin-right: 6px; }
+        .choice-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .choice-btn { background: white; border: 2px solid #dce6ed; padding: 10px 20px; border-radius: 40px; font-weight: 600; color: #0f2b3a; cursor: pointer; font-size: 0.9rem; transition: 0.1s; }
+        .choice-btn.active { background: #0f2b3a; border-color: #0f2b3a; color: white; }
+        .choice-btn:active { transform: scale(0.95); }
+        .services-title { font-size: 1.05rem; font-weight: 600; color: #0f2b3a; margin: 8px 0 14px; }
+        .services-title i { color: #1f6f8a; margin-right: 8px; }
+        .service-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+        .service-btn { background: white; border: 2px solid #dce6ed; padding: 12px 20px; border-radius: 40px; font-size: 1rem; font-weight: 600; color: #0f2b3a; cursor: pointer; transition: 0.1s; flex: 1; min-width: 80px; text-align: center; }
+        .service-btn.active { background: #1f6f8a; border-color: #1f6f8a; color: white; }
+        .service-btn:active { transform: scale(0.95); }
+        
+        /* ===== ORDER SUMMARY ===== */
+        .order-summary-wrapper { display: none; margin-top: 18px; }
+        .order-summary-wrapper.show { display: block; }
+        .order-card { background: white; border-radius: 20px; padding: 18px 16px; border: 1px solid #e8eef2; }
+        .order-card h3 { color: #0f2b3a; font-size: 1.1rem; border-bottom: 2px solid #e8eef2; padding-bottom: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .order-card h3 .close-summary { background: #eef3f7; border: none; padding: 4px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+        .order-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .order-item { background: #f8fbfd; border-radius: 12px; padding: 12px 14px; border-left: 3px solid #1f6f8a; }
+        .order-item .label { font-size: 0.7rem; font-weight: 500; color: #4f6f82; text-transform: uppercase; letter-spacing: 0.3px; }
+        .order-item .value { font-size: 1.05rem; font-weight: 600; color: #0f2b3a; margin-top: 2px; }
+        .order-item .value small { font-weight: 400; font-size: 0.7rem; color: #6f8fa2; }
+        .status-tracker { margin-top: 16px; background: #eef3f7; border-radius: 40px; padding: 12px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; font-size: 0.85rem; }
+        .status-tracker .label { font-weight: 500; color: #0f2b3a; }
+        .status-badge { padding: 4px 18px; border-radius: 40px; font-weight: 600; font-size: 0.8rem; color: white; }
+        .status-badge.pending { background: #b8860b; }
+        .status-badge.progress { background: #1f6f8a; }
+        .status-badge.done { background: #1a8c4a; }
+        .note-staff { margin-top: 14px; background: #eef3f7; padding: 8px 18px; border-radius: 40px; font-size: 0.8rem; color: #0f2b3a; display: inline-block; }
+        .note-staff i { color: #1f6f8a; margin-right: 6px; }
+        .footnote { text-align: center; margin-top: 24px; color: #6f8fa2; font-size: 0.75rem; }
+        
+        /* ===== OVERLAY ===== */
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); backdrop-filter: blur(4px); z-index: 999; justify-content: center; align-items: center; padding: 20px; }
+        .overlay.show { display: flex; }
+        .overlay .modal { background: white; border-radius: 24px; max-width: 420px; width: 100%; padding: 28px 24px; max-height: 90vh; overflow-y: auto; }
+        .overlay .modal h2 { color: #0f2b3a; font-size: 1.3rem; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; }
+        .overlay .modal h2 i { color: #1f6f8a; margin-right: 8px; }
+        .overlay .modal .close-modal { background: #eef3f7; border: none; padding: 4px 18px; border-radius: 40px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+        .summary-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eef3f7; font-size: 0.95rem; }
+        .summary-item .key { color: #4f6f82; }
+        .summary-item .key i { margin-right: 8px; color: #1f6f8a; width: 20px; }
+        .summary-item .val { font-weight: 600; color: #0f2b3a; }
+        .empty-summary { color: #6f8fa2; text-align: center; padding: 24px 0; font-size: 1rem; }
+        .modal-footnote { margin-top: 16px; font-size: 0.8rem; color: #4f6f82; border-top: 1px solid #eef3f7; padding-top: 14px; }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 500px) { .app { padding: 20px 16px 24px; border-radius: 28px; } .landing h1 { font-size: 1.7rem; } .landing .icon-big { font-size: 3.8rem; } .btn { padding: 14px; font-size: 1rem; } .form-card { padding: 20px 16px; } .form-group input { padding: 12px 16px; font-size: 0.95rem; } .service-btn { padding: 10px 14px; font-size: 0.9rem; min-width: 70px; } .choice-btn { padding: 8px 16px; font-size: 0.85rem; } .order-grid { gap: 10px; } .order-item { padding: 10px 12px; } .order-item .value { font-size: 0.95rem; } }
+        @media (max-width: 400px) { .app { padding: 16px 12px 20px; border-radius: 24px; } .landing h1 { font-size: 1.4rem; } .btn { padding: 12px; font-size: 0.9rem; } .btn-group-row { flex-direction: column; gap: 12px; } .order-grid { grid-template-columns: 1fr; } .service-btn { min-width: 60px; padding: 10px 10px; font-size: 0.8rem; } }
+        @media (min-width: 600px) { body { padding: 30px; } .app { max-width: 480px; margin: 0 auto; } }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="brand"><i class="fas fa-tshirt"></i> Laundry</div>
+            <div class="cart-icon" id="cartIcon">
+                <i class="fas fa-shopping-cart"></i> Summary
+                <span class="badge" id="cartBadge">0</span>
+            </div>
+        </div>
+
+        <!-- ===== LANDING ===== -->
+        <div class="view active" id="landingView">
+            <div class="landing">
+                <div class="icon-big"><i class="fas fa-tshirt"></i></div>
+                <h1>Laundry Service</h1>
+                <p>Efficient • Reliable • Hassle-free</p>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" id="showWashBtn"><i class="fas fa-soap"></i> Wash Now</button>
+                    <div class="btn-group-row">
+                        <button class="btn btn-primary" id="showRegisterBtn"><i class="fas fa-user-plus"></i> Register</button>
+                        <button class="btn btn-outline" id="showSignInBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== REGISTER ===== -->
+        <div class="view" id="registerView">
+            <button class="back-btn" id="backFromRegister"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="form-card">
+                <h2><i class="fas fa-user-edit"></i> Register</h2>
+                <div class="form-group"><label><i class="fas fa-user"></i> First Name</label><input type="text" id="regFirst" placeholder="e.g. Maria" /></div>
+                <div class="form-group"><label><i class="fas fa-user"></i> Middle Initial</label><input type="text" id="regMiddle" placeholder="M." maxlength="2" /></div>
+                <div class="form-group"><label><i class="fas fa-user"></i> Surname</label><input type="text" id="regLast" placeholder="e.g. Santos" /></div>
+                <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Address</label><input type="text" id="regAddress" placeholder="Street, City" /></div>
+                <div class="form-group"><label><i class="fas fa-phone"></i> Contact Number</label><input type="text" id="regContact" placeholder="0917 123 4567" /></div>
+                <div class="form-group"><label><i class="fas fa-tag"></i> Nickname</label><input type="text" id="regNick" placeholder="e.g. May" /></div>
+                <div class="form-actions">
+                    <button class="btn btn-danger" id="cancelRegister"><i class="fas fa-times"></i> Cancel</button>
+                    <button class="btn btn-success" id="saveRegisterBtn"><i class="fas fa-save"></i> Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== SIGN IN ===== -->
+        <div class="view" id="signInView">
+            <button class="back-btn" id="backFromSignIn"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="form-card">
+                <h2><i class="fas fa-sign-in-alt"></i> Sign In</h2>
+                <div class="form-group"><label><i class="fas fa-envelope"></i> Contact</label><input type="text" id="signInContact" placeholder="0917 123 4567" /></div>
+                <div class="form-group"><label><i class="fas fa-lock"></i> Password</label><input type="password" id="signInPassword" placeholder="Enter password" /></div>
+                <div class="form-actions">
+                    <button class="btn btn-danger" id="cancelSignIn"><i class="fas fa-times"></i> Cancel</button>
+                    <button class="btn btn-primary" id="signInBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+                </div>
+                <p style="text-align:center;margin-top:16px;font-size:0.9rem;color:#4f6f82;">No account? <a href="#" id="goToRegisterFromSignIn" style="color:#1f6f8a;font-weight:600;text-decoration:none;">Register here</a></p>
+            </div>
+        </div>
+
+        <!-- ===== WASH / SERVICES ===== -->
+        <div class="view" id="washView">
+            <button class="back-btn" id="backFromWash"><i class="fas fa-arrow-left"></i> Back</button>
+            <div class="form-card">
+                <h2><i class="fas fa-soap"></i> Laundry Service</h2>
+                <p style="color:#4f6f82;font-size:0.95rem;margin-bottom:16px;">Select service type and options.</p>
+
+                <div class="choice-group">
+                    <span class="label"><i class="fas fa-truck"></i> Type:</span>
+                    <div class="choice-btn-group">
+                        <button class="choice-btn active" data-choice="dropoff"><i class="fas fa-store"></i> Drop-off</button>
+                        <button class="choice-btn" data-choice="pickup"><i class="fas fa-truck"></i> Pick-up</button>
+                    </div>
+                </div>
+
+                <div class="services-title"><i class="fas fa-list"></i> Choose Service(s):</div>
+                <div class="service-buttons">
+                    <button class="service-btn active" data-service="Wash"><i class="fas fa-water"></i> Wash</button>
+                    <button class="service-btn" data-service="Dry"><i class="fas fa-wind"></i> Dry</button>
+                    <button class="service-btn" data-service="Fold"><i class="fas fa-tshirt"></i> Fold</button>
+                </div>
+
+                <button class="btn btn-secondary" id="submitRequestBtn" style="margin-bottom:8px;"><i class="fas fa-paper-plane"></i> Submit Request</button>
+
+                <div class="order-summary-wrapper" id="orderSummaryWrapper">
+                    <div class="order-card">
+                        <h3><span><i class="fas fa-receipt"></i> Summary</span><button class="close-summary" id="closeSummaryBtn"><i class="fas fa-times"></i> Close</button></h3>
+                        <div class="order-grid">
+                            <div class="order-item"><div class="label">Type</div><div class="value" id="sumServiceType">—</div></div>
+                            <div class="order-item"><div class="label">Services</div><div class="value" id="sumServices">—</div></div>
+                            <div class="order-item"><div class="label">Weight</div><div class="value">— <small>staff</small></div></div>
+                            <div class="order-item"><div class="label">Price</div><div class="value">— <small>staff</small></div></div>
+                            <div class="order-item"><div class="label">Process</div><div class="value">— <small>staff</small></div></div>
+                            <div class="order-item"><div class="label">Status</div><div class="value" id="sumStatus" style="color:#b8860b;"><i class="fas fa-hourglass-half"></i> Pending</div></div>
+                        </div>
+                        <div class="status-tracker">
+                            <span class="label"><i class="fas fa-bell"></i> Status:</span>
+                            <span class="status-badge pending" id="sumStatusBadge">Pending</span>
+                            <span style="font-weight:600;font-size:0.8rem;"><i class="fas fa-stopwatch"></i> <span id="sumRemaining">— min</span></span>
+                            <span style="color:#1a8c4a;font-weight:600;font-size:0.8rem;"><i class="fas fa-check-circle"></i> <span id="sumCompleted">—</span></span>
+                        </div>
+                        <div class="note-staff"><i class="fas fa-info-circle"></i> Staff updates weight, price, time.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footnote"><i class="fas fa-tshirt"></i> Staff finalizes upon inspection</div>
+    </div>
+
+    <!-- ===== OVERLAY ===== -->
+    <div class="overlay" id="summaryOverlay">
+        <div class="modal">
+            <h2><span><i class="fas fa-receipt"></i> Order Summary</span><button class="close-modal" id="closeModalBtn"><i class="fas fa-times"></i> Close</button></h2>
+            <div id="summaryContent"><div class="empty-summary"><i class="fas fa-box-open"></i> No active order.</div></div>
+            <div class="modal-footnote"><i class="fas fa-clock"></i> Status updates from staff</div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- ===== JAVASCRIPT ===== -->
+    <!-- ========================================================= -->
+    <script>
+        (function() {
+            let currentChoice = 'dropoff';
+            let selectedServices = ['Wash'];
+            let orderSubmitted = false;
+            const API_BASE = '/api';
+
+            const landing = document.getElementById('landingView');
+            const registerView = document.getElementById('registerView');
+            const signInView = document.getElementById('signInView');
+            const washView = document.getElementById('washView');
+
+            function showView(view) {
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                if (view === 'landing') landing.classList.add('active');
+                else if (view === 'register') registerView.classList.add('active');
+                else if (view === 'signin') signInView.classList.add('active');
+                else if (view === 'wash') washView.classList.add('active');
+            }
+
+            document.getElementById('showRegisterBtn').onclick = () => showView('register');
+            document.getElementById('showWashBtn').onclick = () => showView('wash');
+            document.getElementById('showSignInBtn').onclick = () => showView('signin');
+            document.getElementById('backFromRegister').onclick = () => showView('landing');
+            document.getElementById('cancelRegister').onclick = () => showView('landing');
+            document.getElementById('backFromSignIn').onclick = () => showView('landing');
+            document.getElementById('cancelSignIn').onclick = () => showView('landing');
+            document.getElementById('backFromWash').onclick = () => showView('landing');
+            document.getElementById('goToRegisterFromSignIn').onclick = (e) => { e.preventDefault(); showView('register'); };
+
+            document.getElementById('signInBtn').onclick = function() {
+                const contact = document.getElementById('signInContact').value.trim();
+                if (!contact) { alert('Enter contact number.'); return; }
+                alert('✅ Sign in successful!');
+                showView('landing');
+            };
+
+            document.getElementById('saveRegisterBtn').onclick = async function() {
+                const firstName = document.getElementById('regFirst').value.trim();
+                const surname = document.getElementById('regLast').value.trim();
+                const contact = document.getElementById('regContact').value.trim();
+                if (!firstName || !surname || !contact) {
+                    alert('Fill in First Name, Surname, and Contact Number.');
+                    return;
+                }
+                try {
+                    const res = await fetch(API_BASE + '/customers', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'firstName=' + encodeURIComponent(firstName) +
+                            '&middleInitial=' + encodeURIComponent(document.getElementById('regMiddle').value.trim()) +
+                            '&surname=' + encodeURIComponent(surname) +
+                            '&address=' + encodeURIComponent(document.getElementById('regAddress').value.trim()) +
+                            '&contactNumber=' + encodeURIComponent(contact) +
+                            '&nickname=' + encodeURIComponent(document.getElementById('regNick').value.trim())
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert('✅ Registered!');
+                        ['regFirst','regMiddle','regLast','regAddress','regContact','regNick'].forEach(id => document.getElementById(id).value = '');
+                        showView('landing');
+                    } else {
+                        alert('❌ Failed: ' + data.message);
+                    }
+                } catch (e) {
+                    alert('❌ Error: ' + e.message);
+                }
+            };
+
+            document.querySelectorAll('.service-btn').forEach(btn => {
+                btn.onclick = function() {
+                    this.classList.toggle('active');
+                    selectedServices = [];
+                    document.querySelectorAll('.service-btn.active').forEach(b => selectedServices.push(b.dataset.service));
+                    if (!selectedServices.length) {
+                        document.querySelector('.service-btn[data-service="Wash"]').classList.add('active');
+                        selectedServices = ['Wash'];
+                    }
+                    document.getElementById('cartBadge').textContent = selectedServices.length;
+                };
+            });
+
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.onclick = function() {
+                    document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentChoice = this.dataset.choice;
+                };
+            });
+
+            document.getElementById('submitRequestBtn').onclick = async function() {
+                if (!selectedServices.length) { alert('Select at least one service.'); return; }
+                const customerId = prompt('Enter Customer ID:');
+                if (!customerId) return;
+                try {
+                    const res = await fetch(API_BASE + '/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'customerId=' + encodeURIComponent(customerId) +
+                            '&services=' + encodeURIComponent(selectedServices.join(',')) +
+                            '&serviceType=' + encodeURIComponent(currentChoice)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        orderSubmitted = true;
+                        const label = currentChoice === 'dropoff' ? '🏪 Drop-off' : '🚚 Pick-up';
+                        document.getElementById('sumServiceType').textContent = label;
+                        document.getElementById('sumServices').textContent = selectedServices.join(' + ');
+                        document.getElementById('sumStatusBadge').textContent = 'Pending';
+                        document.getElementById('sumStatusBadge').className = 'status-badge pending';
+                        document.getElementById('sumRemaining').textContent = '— min';
+                        document.getElementById('sumCompleted').textContent = '—';
+                        document.getElementById('sumStatus').innerHTML = '<i class="fas fa-hourglass-half"></i> Pending';
+                        document.getElementById('orderSummaryWrapper').classList.add('show');
+                        document.getElementById('cartBadge').textContent = selectedServices.length;
+                        document.getElementById('orderSummaryWrapper').scrollIntoView({ behavior: 'smooth' });
+                        updateOverlayContent();
+                        alert('✅ Order submitted!');
+                    } else {
+                        alert('❌ Failed: ' + data.message);
+                    }
+                } catch (e) {
+                    alert('❌ Error: ' + e.message);
+                }
+            };
+
+            document.getElementById('closeSummaryBtn').onclick = function() {
+                document.getElementById('orderSummaryWrapper').classList.remove('show');
+            };
+
+            function updateOverlayContent() {
+                const content = document.getElementById('summaryContent');
+                if (!orderSubmitted) {
+                    content.innerHTML = '<div class="empty-summary"><i class="fas fa-box-open"></i> No active order.</div>';
+                    return;
+                }
+                const label = currentChoice === 'dropoff' ? '🏪 Drop-off' : '🚚 Pick-up';
+                content.innerHTML = `
+                    <div class="summary-item"><span class="key"><i class="fas fa-truck"></i> Type</span><span class="val">${label}</span></div>
+                    <div class="summary-item"><span class="key"><i class="fas fa-list"></i> Services</span><span class="val">${selectedServices.join(' + ')}</span></div>
+                    <div class="summary-item"><span class="key"><i class="fas fa-weight"></i> Weight</span><span class="val">— (staff)</span></div>
+                    <div class="summary-item"><span class="key"><i class="fas fa-tag"></i> Price</span><span class="val">— (staff)</span></div>
+                    <div class="summary-item"><span class="key"><i class="fas fa-clock"></i> Time</span><span class="val">— (staff)</span></div>
+                    <div class="summary-item"><span class="key"><i class="fas fa-info-circle"></i> Status</span><span class="val" style="color:#b8860b;"><i class="fas fa-hourglass-half"></i> Pending</span></div>
+                `;
+            }
+
+            document.getElementById('cartIcon').onclick = function() {
+                updateOverlayContent();
+                document.getElementById('summaryOverlay').classList.add('show');
+            };
+            document.getElementById('closeModalBtn').onclick = function() {
+                document.getElementById('summaryOverlay').classList.remove('show');
+            };
+            document.getElementById('summaryOverlay').onclick = function(e) {
+                if (e.target === this) this.classList.remove('show');
+            };
+
+            document.getElementById('cartBadge').textContent = '1';
+            showView('landing');
+        })();
+    </script>
+</body>
+</html>

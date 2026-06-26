@@ -1,0 +1,7 @@
+com\resources\dao\OrderDAO.class
+com\resources\model\Customer.class
+com\resources\DatabaseConnection.class
+com\resources\dao\CustomerDAO.class
+com\resources\service\LaundryService.class
+com\resources\model\Order.class
+com\resources\controller\LaundryController.class
