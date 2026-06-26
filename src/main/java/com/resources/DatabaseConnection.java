@@ -17,8 +17,13 @@ public class DatabaseConnection {
         String railwayPassword = System.getenv("JDBC_DATABASE_PASSWORD");
         
         if (railwayUrl != null && !railwayUrl.isEmpty()) {
-            // Railway mode
-            url = railwayUrl;
+            // Railway mode - fix URL if needed
+            if (railwayUrl.startsWith("jdbc:")) {
+                url = railwayUrl;
+            } else {
+                // Add jdbc: prefix if missing
+                url = "jdbc:" + railwayUrl;
+            }
             user = railwayUser;
             password = railwayPassword;
             System.out.println("🚀 Running on Railway");
